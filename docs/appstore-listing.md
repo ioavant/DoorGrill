@@ -1,8 +1,13 @@
 # Door Grill — Autodesk App Store listing copy (v1.0.0)
 
-Shared source doc for the store listing and the website. Facts pulled from
-`version.json`, `App.cs`, `branding.props`, `Installer/Product.wxs` and the
-plugin's project memory. Character counts checked against Autodesk's limits.
+Ready-to-paste text for Autodesk's product-listing form. Some fields carry the
+inline HTML that form accepts, so this file is for the App Store only.
+
+**`product-facts.md` is the source of truth** — change a fact there first, then
+re-derive the affected fields here. Do not hand this file to the website; hand it
+`product-facts.md`, which is plain text with no store-specific markup.
+
+Character counts below are checked against Autodesk's hard limits.
 
 ---
 
