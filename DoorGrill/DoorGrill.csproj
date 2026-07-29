@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7FFADC57-A1DB-4E20-B14A-1FB46029743A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DoorGrill</RootNamespace>
+    <!-- Brand-dependent: DoorGrill.dll / DoorGrill.TES.dll. RootNamespace stays put, so embedded
+         resources keep their brand-neutral names either way. -->
+    <AssemblyName>$(BrandAssemblyName)</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <!-- Brand-scoped so both brands can be built back to back without clobbering. -->
+    <OutputPath>bin\Debug\$(Brand)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\$(Brand)\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Ribbon introspection for the shared About panel only; resolved against whatever Revit hosts
+         the add-in at run time. -->
+    <Reference Include="AdWindows">
+      <HintPath>C:\Program Files\Autodesk\Revit 2023\AdWindows.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2023\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <!-- AdWindows ribbon items derive from WPF controls, so the About-panel introspection in App.cs
+         needs PresentationFramework on the reference list even though no WPF UI is built here. -->
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.cs" />
+    <Compile Include="Core\UpdateChecker.cs" />
+    <Compile Include="LinkHelper.cs" />
+    <Compile Include="GrillLink.cs" />
+    <Compile Include="GrillRegistry.cs" />
+    <Compile Include="GrillSettings.cs" />
+    <Compile Include="GrillPlacer.cs" />
+    <Compile Include="PlaceGrillCommand.cs" />
+    <Compile Include="PlaceGrillOnSimilarCommand.cs" />
+    <Compile Include="OptionsCommand.cs" />
+    <Compile Include="UI\OptionsForm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <!-- Generated from ..\version.json by the GenerateVersionInfo target below. -->
+    <Compile Include="Properties\VersionInfo.cs" />
+    <!-- Generated per build from ..\..\_branding — see ..\Directory.Build.props. -->
+    <Compile Include="Properties\BrandInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\version.json" />
+  </ItemGroup>
+  <!-- Product artwork. Brand artwork (web_icon.png, logo.png) is contributed per brand by
+       _branding\Branding.targets. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\doorgrill_16.png" />
+    <EmbeddedResource Include="Resources\doorgrill_32.png" />
+    <EmbeddedResource Include="Resources\doorgrill_update_16.png" />
+    <EmbeddedResource Include="Resources\doorgrill_update_32.png" />
+    <EmbeddedResource Include="Resources\settings_16.png" />
+    <EmbeddedResource Include="Resources\settings_32.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- =================================================================== -->
+  <!-- Single source of truth for the version: ..\version.json             -->
+  <!-- Reads "version" from it and generates Properties\VersionInfo.cs     -->
+  <!-- with the AssemblyVersion attributes before every compile. The MSI    -->
+  <!-- binds its own version to the built DLL, so this one file drives      -->
+  <!-- everything. Edit the version ONLY there.                             -->
+  <!-- =================================================================== -->
+  <PropertyGroup>
+    <VersionJsonFile>$(MSBuildProjectDirectory)\..\version.json</VersionJsonFile>
+    <GeneratedVersionFile>$(MSBuildProjectDirectory)\Properties\VersionInfo.cs</GeneratedVersionFile>
+  </PropertyGroup>
+  <Target Name="GenerateVersionInfo" BeforeTargets="CoreCompile" Inputs="$(VersionJsonFile)" Outputs="$(GeneratedVersionFile)">
+    <ReadLinesFromFile File="$(VersionJsonFile)">
+      <Output TaskParameter="Lines" ItemName="VersionJsonLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <VersionJsonText>@(VersionJsonLines, '')</VersionJsonText>
+      <!-- Extract the "version" string value from the JSON -->
+      <ProductVersion>$([System.Text.RegularExpressions.Regex]::Replace($(VersionJsonText), '(?s)^.*?&quot;version&quot;\s*:\s*&quot;([^&quot;]+)&quot;.*$', '$1'))</ProductVersion>
+    </PropertyGroup>
+    <Error Condition="'$(ProductVersion)' == '' or '$(ProductVersion)' == '$(VersionJsonText)'" Text="Could not read 'version' from version.json" />
+    <ItemGroup>
+      <VersionInfoLines Include="// &lt;auto-generated&gt; — generated from version.json by the GenerateVersionInfo target. Do not edit." />
+      <VersionInfoLines Include="using System.Reflection%3B" />
+      <VersionInfoLines Include="[assembly: AssemblyVersion(&quot;$(ProductVersion)&quot;)]" />
+      <VersionInfoLines Include="[assembly: AssemblyFileVersion(&quot;$(ProductVersion)&quot;)]" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(GeneratedVersionFile)" Lines="@(VersionInfoLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <Message Importance="high" Text="Door Grill version stamped from version.json: $(ProductVersion)" />
+  </Target>
+</Project>

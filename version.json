@@ -1,0 +1,5 @@
+{
+  "version": "1.0.0",
+  "downloadUrl": "https://github.com/ioavant/DoorGrill-releases/releases/download/v1.0.0/DoorGrill_Setup_Vixeldorf.msi",
+  "releaseNotes": "First release: place overflow grilles above linked doors, keep them in sync with the architectural model."
+}

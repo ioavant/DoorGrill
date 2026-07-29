@@ -1,0 +1,80 @@
+<Project>
+
+  <!--
+    Door Grill — product side of the branding configuration.
+
+    What a BRAND is (ribbon tab, About button, help URL, installer artwork,
+    update policy) lives in ..\_branding\<Brand>\brand.props and is shared by
+    every add-in. This file only describes THIS product, plus the handful of
+    values that legitimately differ per brand for it.
+
+    Switch brands with:  dotnet build -p:Brand=Tes     (or -p:Brand=Vixeldorf)
+  -->
+
+  <PropertyGroup>
+    <BrandProduct>DoorGrill</BrandProduct>
+    <BrandProductDisplayName>Door Grill</BrandProductDisplayName>
+    <BrandProductDescription>Places overflow grilles above doors picked in a linked architectural model and keeps them in sync with it.</BrandProductDescription>
+
+    <!-- Namespace the generated Brand class is emitted into. -->
+    <BrandInfoNamespace>DoorGrill</BrandInfoNamespace>
+    <!-- IExternalApplication class the .addin manifests point at. -->
+    <BrandAppClassName>DoorGrill.App</BrandAppClassName>
+
+    <!-- 2027 is deliberately absent: it hosts on .NET 10, and this is a net48
+         assembly. Add it only once a .NET 10 build exists and is tested. -->
+    <BrandSupportedRevitVersions>2022;2023;2024;2025;2026</BrandSupportedRevitVersions>
+
+    <!-- The add-in project folder; the engine derives the built DLL path from it.
+         The file name is brand-dependent (DoorGrill.dll / DoorGrill.TES.dll),
+         so it is not spelled out here. -->
+    <BrandProjectDir>$(MSBuildThisFileDirectory)DoorGrill\</BrandProjectDir>
+
+    <!-- Auto-generated per install location, so each brand gets its own. -->
+    <BrandCoreFilesGuid>*</BrandCoreFilesGuid>
+  </PropertyGroup>
+
+  <!-- ================================================================= -->
+  <!-- TES — the in-house build. Nothing of this product has shipped     -->
+  <!-- under either brand yet, so both GUID sets are freshly generated;  -->
+  <!-- from the first release on, the UpgradeCode and AddInId below must -->
+  <!-- never change or installed copies stop upgrading in place.         -->
+  <!-- ================================================================= -->
+  <PropertyGroup Condition=" '$(Brand)' == 'Tes' ">
+    <!-- All TES add-ins share one "Tools" panel on the TES tab. -->
+    <BrandRibbonPanel>Tools</BrandRibbonPanel>
+
+    <BrandUpgradeCode>1F946E29-3AEC-4E31-8FA6-5090C0D30F55</BrandUpgradeCode>
+    <BrandAddInId>CB5EBE40-4D53-4327-9DB7-004B29BA4579</BrandAddInId>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Brand)' == 'Tes' ">
+    <BrandAddinComponent Include="2022"><Guid>CE22D7C8-1D2D-4FAE-9481-1D9763DD526A</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2023"><Guid>19DB04FE-6BA6-4E70-805C-067C3EAB1B09</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2024"><Guid>AF828421-99AC-4B8C-8E4D-F55A2EF849D6</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2025"><Guid>054FF500-2B87-44B0-B850-C022674C4966</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2026"><Guid>A61C220B-4B5C-4317-8B61-8C522AAA05BD</Guid></BrandAddinComponent>
+  </ItemGroup>
+
+  <!-- ================================================================= -->
+  <!-- Vixeldorf — the public build. Fresh GUIDs, never shared with the   -->
+  <!-- TES build or with any other product, so the two MSIs install side  -->
+  <!-- by side instead of upgrading over each other.                      -->
+  <!-- ================================================================= -->
+  <PropertyGroup Condition=" '$(Brand)' == 'Vixeldorf' ">
+    <!-- Vixeldorf products each get their own panel on the shared tab. -->
+    <BrandRibbonPanel>Door Grill</BrandRibbonPanel>
+
+    <BrandUpgradeCode>A5AC988F-303F-4A70-9695-A0A733CC3C96</BrandUpgradeCode>
+    <BrandAddInId>289C4868-C737-4B2A-AC79-2E8B531C753C</BrandAddInId>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Brand)' == 'Vixeldorf' ">
+    <BrandAddinComponent Include="2022"><Guid>EA6CF2BA-EB53-4575-B23F-EFAADBC584F4</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2023"><Guid>85200AE0-BB71-45FF-A052-5302C5507F10</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2024"><Guid>207EB0B3-099E-4FD4-85C7-96D4DE763D0F</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2025"><Guid>D9337537-D098-491A-BE24-D45F42616DBE</Guid></BrandAddinComponent>
+    <BrandAddinComponent Include="2026"><Guid>09061B77-EF0C-4835-B752-4EC274AE4089</Guid></BrandAddinComponent>
+  </ItemGroup>
+
+</Project>
