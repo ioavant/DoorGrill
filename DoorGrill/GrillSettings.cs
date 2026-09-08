@@ -148,8 +148,8 @@ namespace DoorGrill
             double gap;
             string gapText = Value(json, "mountingGapMm");
             if (gapText != null &&
-                double.TryParse(gapText, NumberStyles.Any, CultureInfo.InvariantCulture, out gap) && gap >= 0.0)
-                MountingGapMm = gap;
+                double.TryParse(gapText, NumberStyles.Any, CultureInfo.InvariantCulture, out gap))
+                MountingGapMm = gap; // may be negative: grille lowered into the door
 
             FlipOrientation = Bool(json, "flipOrientation", FlipOrientation);
             KeepDeletedDoorsEmpty = Bool(json, "keepDeletedDoorsEmpty", KeepDeletedDoorsEmpty);

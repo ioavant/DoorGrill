@@ -65,6 +65,7 @@
     <Compile Include="Core\UpdateChecker.cs" />
     <Compile Include="LinkHelper.cs" />
     <Compile Include="GrillLink.cs" />
+    <Compile Include="GrillAnchor.cs" />
     <Compile Include="GrillRegistry.cs" />
     <Compile Include="GrillSettings.cs" />
     <Compile Include="GrillPlacer.cs" />

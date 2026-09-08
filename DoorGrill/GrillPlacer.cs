@@ -219,6 +219,7 @@ namespace DoorGrill
             TrySetWallThickness(grille, door);
             Orient(doc, grille, facing);
             AlignBottomTo(doc, grille, point);
+            GrillAnchor.Write(grille, point); // baseline for the door-move guard in SyncGrille
             return grille;
         }
 
@@ -226,18 +227,42 @@ namespace DoorGrill
         // changed the wall, or the options may have changed. Must run inside a transaction. Returns
         // true when the grille was actually moved, rotated or resized; false when it was already
         // correct. Geometry failures return false.
+        // When force is false (the Update All pass), a grille is left untouched unless its source door
+        // actually moved in plan - so a manual nudge survives. When force is true (an explicit re-pick
+        // in mode 1) the grille is always brought back onto its door. Pinned grilles are never touched.
         public static bool SyncGrille(Document doc, FamilyInstance grille, FamilyInstance door,
-                                      RevitLinkInstance link, GrillSettings settings)
+                                      RevitLinkInstance link, GrillSettings settings, bool force)
         {
+            // Honour Revit's native Pin: a grille the engineer moved by hand and pinned is left exactly
+            // where it is. (Moving/rotating a pinned element would also throw, which the update pass
+            // would otherwise report as a failure.) Unpin it to let the update take over again.
+            if (grille.Pinned)
+                return false;
+
             XYZ point, facing;
             if (!TryComputeTarget(door, link.GetTotalTransform(),
                                   settings.MountingGapFt, settings.FlipOrientation,
                                   out point, out facing))
                 return false;
 
+            // Door-move guard: compare only the XY of the door's computed target with the stored anchor.
+            // If the door has NOT moved in plan, leave the grille where it is (respecting a manual move).
+            // Z is ignored on purpose - mounting height is an option, not a manual decision.
+            if (!force)
+            {
+                double ax, ay;
+                if (GrillAnchor.TryRead(grille, out ax, out ay))
+                {
+                    double dx = point.X - ax, dy = point.Y - ay;
+                    if (dx * dx + dy * dy <= PositionTolFt * PositionTolFt)
+                        return false; // door unchanged in plan → keep the manual placement
+                }
+            }
+
             bool changed = TrySetWallThickness(grille, door);
             changed |= Orient(doc, grille, facing);
             changed |= AlignBottomTo(doc, grille, point);
+            GrillAnchor.Write(grille, point); // record the door's current target as the new anchor
             return changed;
         }
 

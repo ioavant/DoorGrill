@@ -131,12 +131,13 @@ namespace DoorGrill
 
             Controls.Add(new Label
             {
-                Text = "Clear distance from the door head up to the bottom of the grille.",
+                Text = "Clear distance from the door head up to the bottom of the grille. A negative value "
+                     + "lowers the grille below the head, e.g. down into the door leaf.",
                 Location = new Point(14, y),
-                Size = new Size(424, 18),
+                Size = new Size(424, 32),
                 ForeColor = SystemColors.GrayText
             });
-            y += 30;
+            y += 40;
 
             // ── Orientation ───────────────────────────────────────────────────
             GroupBox orientGroup = new GroupBox
@@ -227,10 +228,11 @@ namespace DoorGrill
             }
 
             double feet;
-            if (!TryParseLength(_gapBox.Text, out feet) || feet < 0.0)
+            if (!TryParseLength(_gapBox.Text, out feet))
             {
                 Warn("Enter the mounting height as a length in this project's units, for example \""
-                     + FormatLength(GrillSettings.DefaultGapMm * GrillPlacer.MM_TO_FT) + "\".");
+                     + FormatLength(GrillSettings.DefaultGapMm * GrillPlacer.MM_TO_FT)
+                     + "\". A negative value is allowed and lowers the grille into the door.");
                 _gapBox.Focus();
                 _gapBox.SelectAll();
                 return;

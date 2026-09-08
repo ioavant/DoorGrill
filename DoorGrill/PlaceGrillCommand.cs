@@ -74,8 +74,9 @@ namespace DoorGrill
                         if (hasGrille)
                         {
                             // Already served: re-sync in place rather than stacking a second grille.
+                            // Explicit pick → force, so even an unmoved door snaps its grille back.
                             foreach (FamilyInstance g in existing)
-                                GrillPlacer.SyncGrille(doc, g, door, link, settings);
+                                GrillPlacer.SyncGrille(doc, g, door, link, settings, force: true);
                         }
                         else
                         {

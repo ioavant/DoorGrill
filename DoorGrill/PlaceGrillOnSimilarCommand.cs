@@ -150,7 +150,7 @@ namespace DoorGrill
 
                         try
                         {
-                            if (GrillPlacer.SyncGrille(doc, grille, srcDoor, srcLink, settings)) moved++;
+                            if (GrillPlacer.SyncGrille(doc, grille, srcDoor, srcLink, settings, force: false)) moved++;
                             else unchanged++;
                         }
                         catch
