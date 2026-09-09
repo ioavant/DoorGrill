@@ -111,7 +111,25 @@ namespace DoorGrill
         /// </summary>
         public bool Save()
         {
-            return TryWrite(SharedPath) || TryWrite(UserPath);
+            if (TryWrite(SharedPath))
+            {
+                // Drop any per-user copy. It exists only for an account that cannot write the shared
+                // file, and Load() lets it win - so leaving a stale one behind silently shadows every
+                // later save from this account, which looks exactly like "the options don't save".
+                TryDelete(UserPath);
+                return true;
+            }
+            return TryWrite(UserPath);
+        }
+
+        private static void TryDelete(string path)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                    File.Delete(path);
+            }
+            catch { /* a fallback we cannot remove is still readable, so nothing is lost */ }
         }
 
         private bool TryWrite(string path)

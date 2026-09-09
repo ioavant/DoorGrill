@@ -14,9 +14,11 @@ namespace DoorGrill
 
     internal static class UpdateChecker
     {
-        // Raw URL to version.json in the public releases repository.
+        // Raw URL to version.json at the root of the public repository. Releases live in that same
+        // repository (see the downloadUrl in version.json), so the feed is served from there too -
+        // a separate "-releases" repo would have to be kept in step with it for no benefit.
         private const string VersionUrl =
-            "https://raw.githubusercontent.com/ioavant/DoorGrill-releases/main/version.json";
+            "https://raw.githubusercontent.com/ioavant/DoorGrill/main/version.json";
 
         public static UpdateInfo AvailableUpdate { get; private set; }
 
